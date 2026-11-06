@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Import CSV · Sales Insights{% endblock %}
+{% block content %}
+<section class="hero"><div><p class="eyebrow">DATA IMPORT</p><h1>Upload sales CSV</h1><p class="muted">Import a CSV file and review invalid rows before correcting them.</p></div></section>
+<section class="panel narrow">
+  <h2>Select a CSV file</h2>
+  <form method="post" enctype="multipart/form-data">
+    <label class="dropzone"><span class="upload-icon">↑</span><strong>Choose your sales CSV</strong><small>Maximum file size: 8 MB</small><input type="file" name="file" accept=".csv" required></label>
+    <button class="button" type="submit">Validate and import</button>
+  </form>
+  <p class="hint">Required columns: <code>product_name, category, sale_date, quantity, unit_price, region</code></p>
+  <p class="hint">Date format: YYYY-MM-DD. Quantity must be a positive integer. Unit price must be zero or greater.</p>
+</section>
+{% if result %}
+<section class="panel">
+  <h2>Import results</h2>
+  <div class="result-grid"><div><strong>{{ result.inserted }}</strong><span>Imported</span></div><div><strong>{{ result.duplicates }}</strong><span>Duplicates skipped</span></div><div><strong>{{ result.errors|length }}</strong><span>Invalid rows</span></div></div>
+  {% if result.errors %}
+  <div class="panel-heading"><h3>Validation errors</h3><a class="text-link" href="{{ url_for('download_errors') }}">Download error report CSV ↓</a></div>
+  <div class="table-wrap"><table><thead><tr><th>Row</th><th>Reason</th><th>Raw data</th></tr></thead><tbody>
+  {% for e in result.errors %}<tr><td>{{ e.row_number }}</td><td>{{ e.reason }}</td><td class="raw">{{ e.raw_data }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% endif %}
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Sales Insights{% endblock %}
+{% block content %}
+<section class="hero">
+  <div><p class="eyebrow">OVERVIEW</p><h1>Sales dashboard</h1><p class="muted">Understand revenue, quantity and product performance at a glance.</p></div>
+  <a class="button" href="{{ url_for('upload') }}">＋ Import CSV</a>
+</section>
+<section class="stats">
+  <article class="stat"><span>Total revenue</span><strong>₹{{ "%.2f"|format(data.revenue) }}</strong></article>
+  <article class="stat"><span>Units sold</span><strong>{{ data.quantity }}</strong></article>
+  <article class="stat"><span>Sales records</span><strong>{{ data.count }}</strong></article>
+</section>
+<section class="panel">
+  <div class="panel-heading"><div><p class="eyebrow">PERFORMANCE</p><h2>Monthly revenue trend</h2></div></div>
+  {% if chart %}<img class="chart" src="data:image/png;base64,{{ chart }}" alt="Monthly revenue line chart">{% else %}<p class="empty">No sales data yet. Import a CSV file to see your chart.</p>{% endif %}
+</section>
+<section class="panel">
+  <div class="panel-heading"><div><p class="eyebrow">PRODUCTS</p><h2>Top-selling products</h2></div></div>
+  {% if data.products %}
+  <div class="table-wrap"><table><thead><tr><th>Product</th><th>Quantity sold</th><th>Revenue</th></tr></thead><tbody>
+  {% for p in data.products %}<tr><td>{{ p.product }}</td><td>{{ p.quantity }}</td><td>₹{{ "%.2f"|format(p.revenue) }}</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="empty">No product data available yet.</p>{% endif %}
+</section>
+{% endblock %}
